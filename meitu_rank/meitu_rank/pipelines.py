@@ -1,0 +1,25 @@
+# Define your item pipelines here
+#
+# Don't forget to add your pipeline to the ITEM_PIPELINES setting
+# See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+
+
+# useful for handling different item types with a single interface
+from itemadapter import ItemAdapter
+import scrapy
+from scrapy.pipelines.images import ImagesPipeline
+
+
+class MeituRankPipeline(ImagesPipeline):
+    def get_media_requests(self, item, info):
+        yield scrapy.Request(
+            url=item['image_urls'],
+            meta={
+                'model_name': item['model_name'],
+                'album_title': item['album_title'],
+            }
+        )
+
+    def file_path(self, request, response=None, info=None, *, item=None):
+        filename = r'rank/%s/%s/%s' % (request.meta['model_name'], request.meta['album_title'], request.url[-10:])
+        return filename
