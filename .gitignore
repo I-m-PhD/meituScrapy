@@ -1,2 +1,7 @@
 /.idea/
 /.venv/
+.DS_Store
+/rank/
+/model/
+/meitu_model/*.log
+/meitu_rank/*.log
