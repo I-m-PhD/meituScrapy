@@ -5,3 +5,4 @@
 /model/
 /meitu_model/*.log
 /meitu_rank/*.log
+*.txt
