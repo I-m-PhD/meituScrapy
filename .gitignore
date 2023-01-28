@@ -6,3 +6,4 @@
 /meitu_model/*.log
 /meitu_rank/*.log
 *.txt
+/meitu_select/
