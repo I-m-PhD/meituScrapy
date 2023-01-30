@@ -2,6 +2,7 @@ import scrapy
 import pathlib
 import pandas as pd
 from meitu_rank_diy.items import MeituRankDiyItem
+import re
 
 
 class Step5Spider(scrapy.Spider):
@@ -26,36 +27,56 @@ class Step5Spider(scrapy.Spider):
                 ms = d.iloc[i]['M.SCORE']
                 mu = d.iloc[i]['M.URL']
                 yield response.follow(url=mu,
-                                      callback=self.parse_al,
+                                      callback=self.parse_alist,
                                       meta={'mn': mn,
                                             'ms': ms, })
 
-    def parse_al(self, response):
+    def parse_alist(self, response):
         mn = response.meta['mn']
         ms = response.meta['ms']
+
         al = response.xpath('/html/body/div[3]/div[2]/ul/li/div[2]/a')
         if al:
             for i in al:
                 au = i.xpath('@href').extract_first()
-                ah = i.xpath('text()').extract_first()
+                ah = re.sub(pattern='([^0-9\u4e00-\u9fff\u0041-\u005a\u0061-\u007a])',
+                            repl='',
+                            string=i.xpath('text()').extract_first())
                 yield response.follow(url=au,
-                                      callback=self.parse_img,
-                                      meta={'model_name': mn,
-                                            'model_score': ms,
-                                            'album_head': ah, })
+                                      callback=self.parse_album,
+                                      meta={'mn': mn,
+                                            'ms': ms,
+                                            'ah': ah, })
 
-    def parse_img(self, response):
-        item = MeituRankDiyItem()
-        item['model_name'] = response.meta['model_name']
-        item['model_score'] = response.meta['model_score']
-        item['album_head'] = response.meta['album_head']
-        item['img_url'] = response.xpath('//*[@id="main-wrapper"]/div[2]/p/a/img/@src').extract_first()
-        yield item
+    def parse_album(self, response):
+        mn = response.meta['mn']
+        ms = response.meta['ms']
+        ah = response.meta['ah']
 
-        npu = response.xpath('//*[@id="pages"]/a[text()="下一页"]/@href').extract_first()
-        if npu:
-            yield response.follow(url=npu,
+        mpu = response.xpath('//*[@id="pages"]/a[text()="尾页"]/@href').extract_first()
+        a = mpu.find('_')
+        b = mpu.find('.html')
+        mp = int(mpu[a + 1:b])
+
+        for i in range(1, mp+1):
+            if i == 1:
+                ipu = response.urljoin('index.html')
+            else:
+                ipu = response.urljoin('index_' + str(i) + '.html')
+            yield response.follow(url=ipu,
                                   callback=self.parse_img,
-                                  meta={'model_name': item['model_name'],
-                                        'model_score': item['model_score'],
-                                        'album_head': item['album_head'], })
+                                  meta={'mn': mn,
+                                        'ms': ms,
+                                        'ah': ah, })
+
+    @staticmethod
+    def parse_img(response):
+        item = MeituRankDiyItem()
+        item['model_name'] = response.meta['mn']
+        item['model_score'] = response.meta['ms']
+        item['album_head'] = response.meta['ah']
+        item['img_url'] = response.xpath('//*[@id="main-wrapper"]/div[2]/p/a/img/@src').extract_first()
+        if item['img_url']:
+            yield item
+        else:
+            print('!*'*9, 'Not get image url at page:', response.url)

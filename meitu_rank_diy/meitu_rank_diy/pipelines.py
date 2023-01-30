@@ -17,9 +17,7 @@ class MeituRankDiyPipeline(ImagesPipeline):
                                    'album_head': item['album_head'], })
 
     def file_path(self, request, response=None, info=None, *, item=None):
-        fn = r'rank_diy/%s/%s/%s' % (
-            request.meta['model_name'] & request.meta['model_score'],
-            request.meta['album_head'],
-            request.url[-10:],
-        )
+        fn = r'rank_diy/%s/%s/%s' % (request.meta['model_name'] + '(' + request.meta['model_score'] + ')',
+                                     request.meta['album_head'],
+                                     request.url[-10:], )
         return fn

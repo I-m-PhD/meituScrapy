@@ -1,3 +1,5 @@
+import time
+
 import scrapy
 import pathlib
 import pandas as pd
@@ -56,6 +58,8 @@ class Step3Spider(scrapy.Spider):
                 except WebDriverException:
                     capture = 'WebDriverException.png'
                     driver.get_screenshot_as_file(capture)
+                    raise
+                time.sleep(1)
         else:
             print('CSV FILE NOT FOUND')
 
