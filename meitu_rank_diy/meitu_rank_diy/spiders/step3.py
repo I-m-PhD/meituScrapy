@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import csv as csv3
 from selenium.common.exceptions import NoSuchElementException
+import re
 
 
 """ selenium """
@@ -23,7 +24,7 @@ driver.set_window_rect(x=0, y=0, width=1440, height=900)
 fn3 = 'model.csv'
 f3 = open(file=fn3, mode='w', encoding='utf-8', newline='')
 w3 = csv3.writer(f3)
-fields = ['M.NAME', 'M.SCORE', 'M.URL']
+fields = ['M.NAME', 'M.SCORE', 'A.QYT', 'M.URL']
 w3.writerow(fields)
 
 
@@ -37,12 +38,13 @@ class Step3Spider(scrapy.Spider):
             d = pd.read_csv('mid_sorted.csv', encoding='utf-8')
             mxmid = d.iloc[0]['M.ID']
             for i in range(1, mxmid+1):
-                mu = response.urljoin(str(mxmid))
+                mu = response.urljoin(str(i))
                 driver.get(mu)
                 try:
                     mn = driver.find_element(by=By.XPATH, value='//*[@id="meinv-wrapper"]/div[1]/div/div[2]/h3').text
                     ms = int(driver.find_element(by=By.ID, value='diggnum').text)
-                    rows = [[mn, ms, mu]]
+                    aq = re.sub(pattern='([^0-9])', repl='', string=driver.find_element(by=By.XPATH, value='/html/body/div[3]/div[1]/span').text)
+                    rows = [[mn, ms, aq, mu]]
                     w3.writerows(rows)
                 except NoSuchElementException:
                     capture = 'NoSuchElementException.png'

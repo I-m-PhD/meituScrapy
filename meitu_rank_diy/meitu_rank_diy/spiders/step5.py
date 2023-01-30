@@ -27,6 +27,7 @@ class Step5Spider(scrapy.Spider):
                                       callback=self.parse_al,
                                       meta={'mn': mn,
                                             'ms': ms, })
+
     def parse_al(self, response):
         mn = response.meta['mn']
         ms = response.meta['ms']
