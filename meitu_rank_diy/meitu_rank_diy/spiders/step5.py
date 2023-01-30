@@ -15,11 +15,13 @@ class Step5Spider(scrapy.Spider):
 
             """
             How many models you want to collect?
-            Change the x value below as you wish.
+            Change the values below as you wish: y should be larger than x.
+            Refer to the line numbers in model_sorted.csv file: line 2 is x=0.
             """
 
             x = 2
-            for i in range(0, x):
+            y = 3
+            for i in range(x, y):
                 mn = d.iloc[i]['M.NAME']
                 ms = d.iloc[i]['M.SCORE']
                 mu = d.iloc[i]['M.URL']

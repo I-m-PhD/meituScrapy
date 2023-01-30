@@ -3,12 +3,13 @@ import re
 import csv as csv1
 
 
-""" csv """
-fn1 = 'mid.csv'
-f1 = open(file=fn1, mode='w', encoding='utf-8', newline='')
-w1 = csv1.writer(f1)
-fields = ['M.ID']
-w1.writerow(fields)
+class CreateCsv:
+    """ csv """
+    fn1 = 'mid.csv'
+    f1 = open(file=fn1, mode='w', encoding='utf-8', newline='')
+    w1 = csv1.writer(f1)
+    fields = ['M.ID']
+    w1.writerow(fields)
 
 
 class Step1Spider(scrapy.Spider):
@@ -33,7 +34,7 @@ class Step1Spider(scrapy.Spider):
             mu = i.xpath('p[1]/a/@href').extract_first()
             mid = int(re.sub(pattern='([^0-9])', repl='', string=mu))
             rows = [[mid]]
-            w1.writerows(rows)
+            CreateCsv.w1.writerows(rows)
 
     def __del__(self):
-        f1.close()
+        CreateCsv.f1.close()
