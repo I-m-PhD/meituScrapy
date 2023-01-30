@@ -8,5 +8,9 @@
 /meitu_rank/*.log
 /meitu_rank_diy/*.log
 *.txt
+*/*.txt
 *.log
+*/*.log
+*.csv
+*/*.csv
 /meitu_fav/

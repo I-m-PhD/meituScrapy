@@ -48,6 +48,7 @@ class Step3Spider(scrapy.Spider):
                     aq = re.sub(pattern='([^0-9])', repl='', string=driver.find_element(by=By.XPATH, value='/html/body/div[3]/div[1]/span').text)
                     rows = [[mn, ms, aq, mu]]
                     CreateCsv2.w3.writerows(rows)
+                    print('-'*18, mn, ms, aq, mu)
                 except NoSuchElementException:
                     capture = 'NoSuchElementException.png'
                     driver.get_screenshot_as_file(capture)
