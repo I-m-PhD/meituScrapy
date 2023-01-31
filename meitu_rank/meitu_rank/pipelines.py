@@ -21,5 +21,5 @@ class MeituRankPipeline(ImagesPipeline):
         )
 
     def file_path(self, request, response=None, info=None, *, item=None):
-        filename = r'rank/%s/%s/%s' % (request.meta['model_name'], request.meta['album_title'], request.url[-10:])
+        filename = r'rst-rank/%s/%s/%s' % (request.meta['model_name'], request.meta['album_title'], request.url[-10:])
         return filename

@@ -16,12 +16,14 @@ class Step5Spider(scrapy.Spider):
 
             """
             How many models you want to collect?
-            Change the values below as you wish: y should be larger than x.
-            Refer to the line numbers in model_sorted.csv file: line 2 is x=0.
+            Change the integers below as you wish: y should be larger than x.
+            Refer to the line numbers in model_sorted.csv file: 
+            when x=0, it gets you the model in line 2.
+            e.g. x=145 will get you all albums and photos of 古月 in line 147
             """
 
-            x = 2
-            y = 3
+            x = 145
+            y = 146
             for i in range(x, y):
                 mn = d.iloc[i]['M.NAME']
                 ms = d.iloc[i]['M.SCORE']

@@ -1,10 +1,6 @@
 /.idea/
 /.venv/
 .DS_Store
-/fav/
-/model/
-/rank/
-/rank_diy/
 /meitu_model/*.log
 /meitu_rank/*.log
 /meitu_rank_diy/*.log
@@ -12,6 +8,4 @@
 */*.txt
 *.log
 */*.log
-*.csv
-*/*.csv
 /meitu_fav/
