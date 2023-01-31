@@ -73,6 +73,6 @@ class Step3Spider(scrapy.Spider):
         else:
             print('CSV FILE NOT FOUND')
 
-    # def __del__(self):
-    #     driver.quit()
+    def __del__(self):
+        driver.quit()
     #     CreateCsv2.f3.close()
