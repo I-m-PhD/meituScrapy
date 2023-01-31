@@ -36,46 +36,61 @@ class ModelSpider(scrapy.Spider):
             # print(x, mo, mn, mu)
             yield response.follow(
                 url=mu,
-                callback=self.parse_album,
+                callback=self.parse_albumlist,
                 dont_filter=True,
                 meta={'mo': mo, 'mn': mn}
             )
 
-    def parse_album(self, response):
+    def parse_albumlist(self, response):
         mo = response.meta['mo']
         mn = response.meta['mn']
         al = response.xpath('/html/body/div[3]/div[2]/ul/li/div[2]/a')
-        # x = 0
-        for i in al:
-            # x += 1
-            au = i.xpath('@href').extract_first()
-            ahr = i.xpath('text()').extract_first()
-            ah = re.sub(pattern='([^0-9\u4e00-\u9fff\u0041-\u005a\u0061-\u007a])', repl='', string=ahr)
-            # print('(', x, ')', mo, mn, ah)
-            yield response.follow(
-                url=au,
-                callback=self.parse_img,
-                dont_filter=True,
-                meta={'model_origin': mo, 'model_name': mn, 'album_head': ah}
-            )
+        if al:
+            # x = 0
+            for i in al:
+                # x += 1
+                au = i.xpath('@href').extract_first()
+                ahr = i.xpath('text()').extract_first()
+                ah = re.sub(pattern='([^0-9\u4e00-\u9fff\u0041-\u005a\u0061-\u007a])', repl='', string=ahr)
+                # print('(', x, ')', mo, mn, ah)
+                yield response.follow(
+                    url=au,
+                    callback=self.parse_album,
+                    dont_filter=True,
+                    meta={'mo': mo, 'mn': mn, 'ah': ah}
+                )
 
-    def parse_img(self, response):
-        mo = response.meta['model_origin']
-        mn = response.meta['model_name']
-        ah = response.meta['album_head']
+    def parse_album(self, response):
+        mo = response.meta['mo']
+        mn = response.meta['mn']
+        ah = response.meta['ah']
+
+        mpu = response.xpath('//*[@id="pages"]/a[text()="尾页"]/@href').extract_first()
+        a = mpu.find('_')
+        b = mpu.find('.html')
+        mp = int(mpu[a+1:b])
+
+        for i in range(1, mp+1):
+            if i == 1:
+                ipu = response.urljoin('index.html')
+            else:
+                ipu = response.urljoin('index_' + str(i) + '.html')
+            yield response.follow(url=ipu, callback=self.parse_img, meta={'mo': mo, 'mn': mn, 'ah': ah})
+
+    @staticmethod
+    def parse_img(response):
+        mo = response.meta['mo']
+        mn = response.meta['mn']
+        ah = response.meta['ah']
         iu = response.xpath('//*[@id="main-wrapper"]/div[2]/p/a/img/@src').extract_first()
         t = MeituModelItem()
         t['model_origin'] = mo
         t['model_name'] = mn
         t['album_head'] = ah
         t['img_url'] = iu
-        yield t
+        if t['img_url']:
+            yield t
+        else:
+            print('!*' * 9, 'Not get image url at page:', response.url)
+
         print(t)
-        npu = response.xpath('//*[@id="pages"]/a[text()="下一页"]/@href').extract_first()
-        if npu:
-            yield response.follow(
-                url=npu,
-                callback=self.parse_img,
-                dont_filter=True,
-                meta={'model_origin': mo, 'model_name': mn, 'album_head': ah}
-            )

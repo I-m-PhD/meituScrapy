@@ -1,6 +1,7 @@
 /.idea/
 /.venv/
 .DS_Store
+/fav/
 /model/
 /rank/
 /rank_diy/
