@@ -8,7 +8,7 @@ from selenium.webdriver.remote.remote_connection import LOGGER
 import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import csv as csv3
+# import csv as csv3
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 import re
@@ -23,13 +23,13 @@ driver = webdriver.Chrome(options=driver_options)
 driver.set_window_rect(x=0, y=0, width=1440, height=900)
 
 
-class CreateCsv2:
-    """ csv """
-    fn3 = 'model.csv'
-    f3 = open(file=fn3, mode='w', encoding='utf-8', newline='')
-    w3 = csv3.writer(f3)
-    fields = ['M.NAME', 'M.SCORE', 'A.QYT', 'M.URL']
-    w3.writerow(fields)
+# class CreateCsv2:
+#     """ csv """
+#     fn3 = 'model.csv'
+#     f3 = open(file=fn3, mode='w', encoding='utf-8', newline='')
+#     w3 = csv3.writer(f3)
+#     fields = ['M.NAME', 'M.SCORE', 'A.QYT', 'M.URL']
+#     w3.writerow(fields)
 
 
 class Step3Spider(scrapy.Spider):
@@ -41,6 +41,11 @@ class Step3Spider(scrapy.Spider):
         if pathlib.Path('mid_sorted.csv').exists():
             d = pd.read_csv('mid_sorted.csv', encoding='utf-8')
             mxmid = d.iloc[0]['M.ID']
+
+            """ csv, using pandas instead of csv """
+            df3 = pd.DataFrame(columns=['M.NAME', 'M.SCORE', 'A.QYT', 'M.URL'])
+            df3.to_csv('model.csv', index=False)
+
             for i in range(1, mxmid+1):
                 mu = response.urljoin(str(i))
                 driver.get(mu)
@@ -48,8 +53,13 @@ class Step3Spider(scrapy.Spider):
                     mn = driver.find_element(by=By.XPATH, value='//*[@id="meinv-wrapper"]/div[1]/div/div[2]/h3').text
                     ms = int(driver.find_element(by=By.ID, value='diggnum').text)
                     aq = re.sub(pattern='([^0-9])', repl='', string=driver.find_element(by=By.XPATH, value='/html/body/div[3]/div[1]/span').text)
-                    rows = [[mn, ms, aq, mu]]
-                    CreateCsv2.w3.writerows(rows)
+                    # """ csv """
+                    # rows = [[mn, ms, aq, mu]]
+                    # CreateCsv2.w3.writerows(rows)
+                    """ csv, using pandas instead of csv """
+                    pd.read_csv('model.csv')
+                    df3.loc[len(df3) + 1] = [mn, ms, aq, mu]
+                    df3.to_csv('model.csv', index=False, mode='w', encoding='utf-8')
                     print('-'*18, mn, ms, aq, mu)
                 except NoSuchElementException:
                     capture = 'NoSuchElementException.png'
@@ -63,6 +73,6 @@ class Step3Spider(scrapy.Spider):
         else:
             print('CSV FILE NOT FOUND')
 
-    def __del__(self):
-        driver.quit()
-        CreateCsv2.f3.close()
+    # def __del__(self):
+    #     driver.quit()
+    #     CreateCsv2.f3.close()
