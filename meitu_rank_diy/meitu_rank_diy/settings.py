@@ -67,7 +67,7 @@ DEFAULT_REQUEST_HEADERS = {
 ITEM_PIPELINES = {
     'meitu_rank_diy.pipelines.MeituRankDiyPipeline': 300,
 }
-IMAGES_STORE = '../'
+IMAGES_STORE = './'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

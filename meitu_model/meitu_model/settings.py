@@ -67,7 +67,7 @@ DEFAULT_REQUEST_HEADERS = {
 ITEM_PIPELINES = {
     'meitu_model.pipelines.MeituModelPipeline': 300,
 }
-IMAGE_STORE = '../'
+IMAGE_STORE = './'
 IMAGES_EXPIRES = 30
 
 # Enable and configure the AutoThrottle extension (disabled by default)
