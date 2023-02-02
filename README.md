@@ -1,24 +1,17 @@
-# Intro.
-This is a starter-friendly crawler/spider based on Scrapy, targeting at **[meitu131.com](https://www.meitu131.com/)**.
-Fundamental thought is to download all pictures under a certain category, e.g. 
-**[Rank](https://www.meitu131.com/rank/nvshen/)** in this demo, and keep them in a 3-level structure 
-`<girls>/<albums>/images.jpg` stored in a root folder `./rank`.
+# Introduction  
 
-This demo is built with 
-> - macOS 13.1  
-> - Python: 3.9.6  
-> - scrapy  
-> - pillow  
+Aims at [MEITU131](https://www.meitu131.net).  
 
-# Usage
-Just type in the following commands in the `Terminal`:
-```python
-cd meitu_rank
-```
-```python
-pip install -r requirements.txt
-```
-```python
-python run.py
-```
-There you go!
+# Specification  
+
+> Built on `macOS 13.1`  
+> with os built-in `Python: 3.9.6`  
+> utilising `scrapy` `pillow` `pandas`  
+> some project also utilises `selenium` for JS-loaded elements  
+
+# Contents
+
+Contains three scrapy projects:  
+- `meitu_model` starting with the page [女神大全](https://www.meitu131.net/nvshen/)  
+- `meitu_rank` starting with the page [排行榜DIGG/总榜](https://www.meitu131.net/rank/nvshen/)  
+- `meitu_rank_diy` is similar to `meitu_model` while it collects the entire models including those invisible in the index page, sorts them according to the "score" (JS-loaded element in each model's page), and parses the top listed ones.
